@@ -71,8 +71,8 @@ try:
                'Principal': {'Service': 'redshift.amazonaws.com'}}],
              'Version': '2012-10-17'})
     )    
-except Exception as e:
-    print(e)
+except iam_client.exceptions.EntityAlreadyExistsException:
+    print(f"IAM role {IAM_ROLE_NAME} already exists, skipping creation")
 
 print("**********************************************")
 print("Attaching policies to IAM Role")
@@ -178,9 +178,12 @@ try:
         FromPort=int(DB_PORT),
         ToPort=int(DB_PORT)
     )
-
-except Exception as e:
-    print(e)
+    
+except ec2_client.exceptions.ClientError as e:
+    if "InvalidPermission.Duplicate" in str(e):
+        print("Ingress rule already exists, skipping")
+    else:
+        raise
     
 print("**************************************************************")
 print("Validating cluster availability...")

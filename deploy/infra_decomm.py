@@ -41,10 +41,16 @@ try:
         SkipFinalClusterSnapshot=True
         )
     
-    print(redshift.describe_clusters(ClusterIdentifier=CLUSTER_IDENTIFIER)['Clusters'][0])
+    print("Waiting for cluster deletion to complete...")
+    waiter = redshift.get_waiter('cluster_deleted')
+    waiter.wait(
+        ClusterIdentifier=CLUSTER_IDENTIFIER,
+        WaiterConfig={'Delay': 15, 'MaxAttempts': 60}  # up to 15 min
+    )
+    print(f"Cluster {CLUSTER_IDENTIFIER} successfully deleted")
 
-except Exception as e:
-    print(e)
+except redshift.exceptions.ClusterNotFoundFault:
+    print(f"Cluster {CLUSTER_IDENTIFIER} does not exist, skipping deletion")
 
 print("**********************************************")
 print("Detatching IAM Role policies...")
@@ -55,8 +61,8 @@ try:
         PolicyArn="arn:aws:iam::aws:policy/AmazonS3FullAccess"
         )
 
-except Exception as e:
-    print(e)
+except iam_client.exceptions.NoSuchEntityException:
+    print(f"Role {IAM_ROLE_NAME} or policy attachment not found, skipping detach")
 
 print("**********************************************")
 print("Deleting IAM Role")
@@ -64,9 +70,11 @@ print("Deleting IAM Role")
 try:
     iam_client.delete_role(RoleName=IAM_ROLE_NAME)
 
-except Exception as e:
-    print(e)
-
+except iam_client.exceptions.NoSuchEntityException:
+    print(f"IAM role {IAM_ROLE_NAME} already deleted, skipping")
+except iam_client.exceptions.DeleteConflictException as e:
+    print(f"Role {IAM_ROLE_NAME} still has attached policies/resources: {e}")
+    raise
 print("**********************************************")
 print("Removing Cluster endpoint to dwh.cfg file...")
 
