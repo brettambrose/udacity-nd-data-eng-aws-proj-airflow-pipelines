@@ -5,12 +5,13 @@
 2. [AWS Prerequisites](#aws-prerequsites)
     1. [Docker Desktop and Apache Airflow](#docker-desktop-and-apache-airflow)
 3. [Project Datasets](#project-datasets)
-4. [Initiating the Airflow Web Server](#initiating-the-airflow-web-server)
+4. [Local AWS config and credenitals for devs](#local-aws-config-and-credenitals-for-devs)
+5. [Initiating the Airflow Web Server](#initiating-the-airflow-web-server)
     1. [Add AWS Credentials to Airflow](#add-aws-credentials-to-airflow)
-5. [Deploying AWS Infrastructure with IaC](#deploying-aws-infrastructure-with-iac)
+6. [Deploying AWS Infrastructure with IaC](#deploying-aws-infrastructure-with-iac)
     1. [Add Redshift Connection to Airflow](#add-redshift-connection-to-airflow)
-6. [Running the DAG in Airflow](#running-the-dag-in-airflow)
-7. [Decommissioning Docker and Redshift](#decommissioning-docker-and-redshift)
+7. [Running the DAG in Airflow](#running-the-dag-in-airflow)
+8. [Decommissioning Docker and Redshift](#decommissioning-docker-and-redshift)
 
 ## Project Summary
 A music streaming company, Sparkify, has decided that it is time to introduce more automation and monitoring to their data warehouse ETL pipelines and come to the conclusion that the best tool to achieve this is Apache Airflow.
