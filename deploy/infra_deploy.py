@@ -1,24 +1,12 @@
 import boto3
 import json
 import psycopg2
-import configparser
-import os
-import sys
-
-sys.path.append(os.getcwd())
 from util.config_functions import modify_config_file
+from util.config_loader import  load_main_config, load_aws_credentials, load_aws_config
 
-main_config_path = "dwh.cfg"
-main_config = configparser.ConfigParser()
-main_config.read(main_config_path)
-
-aws_creds_path = os.path.expanduser("~\\.aws\\credentials")
-aws_creds = configparser.ConfigParser()
-aws_creds.read(aws_creds_path)
-
-aws_config_path = os.path.expanduser("~\\.aws\\config")
-aws_config = configparser.ConfigParser()
-aws_config.read(aws_config_path)
+main_config, main_config_path = load_main_config()
+aws_creds, aws_creds_path = load_aws_credentials()
+aws_config, aws_config_path = load_aws_config()
 
 # CLUSTER
 CLUSTER_IDENTIFIER    = main_config.get("CLUSTER","CLUSTER_IDENTIFIER")
