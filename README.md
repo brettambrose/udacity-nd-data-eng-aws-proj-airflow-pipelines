@@ -54,6 +54,30 @@ The following source datasets are used:
 
 > s3://udacity-dend/log_json_path.json 
 
+## Local AWS config and credenitals for devs
+This repo assumes that there is a .aws file in the current user's home directory and there are two files within it: credentials and config.
+
+Example:
+
+C:\Users\USERNAME.aws
+
+C:\Users\USERNAME.aws\config ... will need to be populated with your access key and secrets, and should look like:
+<pre>
+[default]
+[default]
+aws_access_key_id = YOURAWSKEY
+aws_secret_access_key = YOURAWSSECRET
+</pre>
+
+C:\Users\USERNAME.aws\config ... will need to be configured with your specific AWS region, and a glue profile, and should look like:
+<pre>
+[default]
+region = us-east-1
+
+[profile Glue]
+role_arn = 
+</pre>
+
 ## Initiating the Airflow Web Server
 
 Ensure [Docker Desktop](https://www.docker.com/products/docker-desktop/) is installed before proceeding.
@@ -73,7 +97,7 @@ Then go to http://localhost:8080/ - this is default port for Airflow on a local 
 
 ### Add AWS Credentials to Airflow
 
-The same key and secret placed in [dwh.cfg](/dwh.cfg) will also need to be placed in Airflow.
+The same key and secret placed in [.aws/credentials](#local-aws-config-and-credenitals-for-devs) will also need to be placed in Airflow.
 
 Go to the Airflow UI --> Admin --> Connections --> Add New Record (little blue plus sign)
 
@@ -81,7 +105,7 @@ Connection Type = "Amazon Web Services"
 
 ![Airflow Add AWS Credentials](/assets/2025-04-29%2000_14_16-Add%20AWS%20Connection%20-%20Airflow.png)
 
-## Deploying AWS Infrastructure with IaC
+## Deploying AWS Infrastructure with Imperative Provisioning Script
 
 1. Go to the [deploy](/deploy/) folder
 2. run the [infra_deploy.py](/deploy/infra_deploy.py) script, which will use boto3 to...
