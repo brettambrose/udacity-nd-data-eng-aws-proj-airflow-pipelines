@@ -2,6 +2,7 @@ import boto3
 import json
 import psycopg2
 import time
+import requests
 from util.config_functions import modify_config_file
 from util.config_loader import  load_main_config, load_aws_credentials, load_aws_config
 
@@ -164,12 +165,15 @@ modify_config_file(
 print("**********************************************")
 print("Specifying ingress rules to default sec group")
 
+my_ip = requests.get("https://checkip.amazonaws.com").text.strip()
+cidr = f"{my_ip}/32"
+
 try:
     group_id = ec2_client.describe_security_groups()["SecurityGroups"][0]["GroupId"]
     defaultSg = ec2.SecurityGroup(group_id)
     defaultSg.authorize_ingress(
         GroupName=defaultSg.group_name,
-        CidrIp='0.0.0.0/0',
+        CidrIp=cidr,
         IpProtocol='TCP',
         FromPort=0,
         ToPort=5500  
