@@ -60,9 +60,9 @@ This repo assumes that there is a .aws file in the current user's home directory
 
 Example:
 
-C:\Users\USERNAME.aws
+C:\Users\USERNAME\.aws
 
-C:\Users\USERNAME.aws\config ... will need to be populated with your access key and secrets, and should look like:
+C:\Users\USERNAME\.aws\config ... will need to be populated with your access key and secrets, and should look like:
 <pre>
 [default]
 [default]
@@ -70,12 +70,12 @@ aws_access_key_id = YOURAWSKEY
 aws_secret_access_key = YOURAWSSECRET
 </pre>
 
-C:\Users\USERNAME.aws\config ... will need to be configured with your specific AWS region, and a glue profile, and should look like:
+C:\Users\USERNAME\.aws\config ... will need to be configured with your specific AWS region, and a glue profile, and should look like:
 <pre>
 [default]
 region = us-east-1
 
-[profile Glue]
+[profile Redshift]
 role_arn = 
 </pre>
 
