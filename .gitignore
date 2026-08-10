@@ -4,11 +4,20 @@
 .env
 .env.local
 
-# pycache
+
+# ==================================
+# 2. pychache
+# ==================================
 __pycache__/
 
-# # Jupyter Notebook checkpoints
-.ipynb_checkpoints/
 
-# logs
+# ==================================
+# 3. Jupyter Notebook Files
+# ==================================
+.ipynb_checkpoints/
+*.ipynb
+
+# ==================================
+# 4. Logs
+# ==================================
 logs/
