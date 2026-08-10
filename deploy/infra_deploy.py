@@ -175,8 +175,8 @@ try:
         GroupName=defaultSg.group_name,
         CidrIp=cidr,
         IpProtocol='TCP',
-        FromPort=0,
-        ToPort=5500  
+        FromPort=int(DB_PORT),
+        ToPort=int(DB_PORT)
     )
 
 except Exception as e:
