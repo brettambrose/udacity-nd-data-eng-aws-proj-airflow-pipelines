@@ -1,6 +1,7 @@
 import boto3
 import json
 import psycopg2
+import time
 from util.config_functions import modify_config_file
 from util.config_loader import  load_main_config, load_aws_credentials, load_aws_config
 
@@ -114,8 +115,21 @@ try:
         IamRoles=[role_arn]
     )
     
-except Exception as e:
-    print(e)
+except redshift.exceptions.ClusterAlreadyExistsFault:
+    print(f"Cluster {CLUSTER_IDENTIFIER} already exists, skipping creation")
+
+print("**************************************************************")
+print("Waiting for cluster availability...")
+
+waiter = redshift.get_waiter('cluster_available')
+waiter.wait(
+    ClusterIdentifier=CLUSTER_IDENTIFIER,
+    WaiterConfig={'Delay': 15, 'MaxAttempts': 60}  # up to 15 min
+)
+
+clusterProps = redshift.describe_clusters(ClusterIdentifier=CLUSTER_IDENTIFIER)['Clusters'][0]
+clusterHost = clusterProps['Endpoint']['Address']
+print(f"{clusterHost} now available")
 
 print("**********************************************")
 print("Waiting for cluster availability...")
@@ -164,14 +178,18 @@ try:
 except Exception as e:
     print(e)
     
-print("**********************************************")
+print("**************************************************************")
 print("Validating cluster availability...")
 
-try:
-    conn = psycopg2.connect("host={} dbname={} user={} password={} port={}".format(clusterHost, DB_NAME, DB_USER, DB_PASSWORD, DB_PORT))
-    conn.close()
+for attempt in range(30):
 
-    print("Successfully connected to cluster")
+    try:
+        conn = psycopg2.connect("host={} dbname={} user={} password={} port={} connect_timeout=10".format(clusterHost, DB_NAME, DB_USER, DB_PASSWORD, DB_PORT))
+        conn.close()
 
-except Exception as e:
-    print(e)
+        print("Successfully connected to cluster")
+        break
+
+    except Exception as e:
+        print(f"Attempt {attempt+1}: {e}")
+        time.sleep(10)
